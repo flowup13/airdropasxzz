@@ -124,6 +124,8 @@ FOLLOW_TWITTER_TEXT = f"""
 JOIN_DISCORD_TEXT = f'''
 🔹 Join our Discord & Subscribed, likes and share our video on Youtube
 {DISCORD_LINKS}
+🔹 Youtube Channel
+https://www.youtube.com/channel/UCBG6vbnCNgSI_EFkDgQbMQA/videos
 '''
 
 SUBMIT_BEP20_TEXT = f"""
@@ -142,7 +144,7 @@ Thank you!
 Rewards would be sent out automatically to your {AIRDROP_NETWORK} address on the {AIRDROP_DATE}
 
 Don't forget to:
-🔸 Stay in the telegram groups & channels
+🔸 Stay in the telegram groups
 🔸 Follow all the social media channels for the updates
 
 Your personal referral link (+{"{:,.2f}".format(REFERRAL_REWARD)} {COIN_SYMBOL} for each referral)
@@ -273,6 +275,7 @@ def submit_details(update, context):
 
 
 def follow_telegram(update, context):
+    update.message.reply_text(text=MAKE_SURE_TELEGRAM)
     update.message.reply_text(text="Please click on \"Done\" to proceed", parse_mode=telegram.ParseMode.MARKDOWN, reply_markup=ReplyKeyboardMarkup(
         [["Done"], ["Cancel"]]
     ))
@@ -280,10 +283,22 @@ def follow_telegram(update, context):
     return FOLLOW_TWITTER
 
 def check_joined_channel(user):
-    
+    try:
+        for link in TELEGRAM_LINKS.split("\n"):
+            link ="@"+link.split("/")[-1]
+            reply = telegram.bot.Bot(BOT_TOKEN).get_chat_member(link,user)
+            if reply.status in ('left','kicked'):
+                return False
+    except:
+        return False
     return True
 
 def follow_twitter(update, context):
+    if not check_joined_channel(user = update.message.from_user.id):
+            update.message.reply_text(text=f'You have not joined\n {TELEGRAM_LINKS}\nPlease join first and click on "Done" to proceed', reply_markup=ReplyKeyboardMarkup(
+                [["Done"], ["Cancel"],["/restart"]]
+            ))
+            return FOLLOW_TWITTER
     update.message.reply_text(text=FOLLOW_TWITTER_TEXT, parse_mode=telegram.ParseMode.MARKDOWN)
     update.message.reply_text(text="Type in the link to *your Twitter profile* to proceed.\n\nExample: \nhttps://twitter.com/example", parse_mode=telegram.ParseMode.MARKDOWN, reply_markup=ReplyKeyboardMarkup(
         [["Cancel"]]
@@ -292,8 +307,32 @@ def follow_twitter(update, context):
 
 
 def submit_address(update, context):
+    user = update.message.from_user
+    if not user.id in USERINFO:
+        return startAgain(update, context)
+    if users.find({"twitter_username": update.message.text.strip()}).count() != 0:
+        update.message.reply_text(text="Twitter Link Already Exists. Try again!\n\nExample: \nhttps://twitter.com/example", parse_mode=telegram.ParseMode.MARKDOWN, reply_markup=ReplyKeyboardMarkup(
+            [["Cancel"]]
+        ))
+        return JOIN_DISCORD
+    USERINFO[user.id].update({"twitter_username": update.message.text.strip()})
     update.message.reply_text(text=JOIN_DISCORD_TEXT, parse_mode=telegram.ParseMode.MARKDOWN)
     update.message.reply_text(text="Type in *your Discord username* to proceed.\n\nExample: \nExample#1234 \n\n_Incorrect Details? Use_ /restart _command to start over._", parse_mode=telegram.ParseMode.MARKDOWN, reply_markup=ReplyKeyboardMarkup(
+        [["Cancel"],["/restart"]]
+    ))
+    return SUBMIT_ADDRESS
+
+def submit_discord(update, context):
+    user = update.message.from_user
+    if not user.id in USERINFO:
+        return startAgain(update, context)
+    if users.find({"discord_username": update.message.text.strip()}).count() != 0:
+        update.message.reply_text(text="Discord Username Already Exists. Try again!\n\nExample: \nExample#1234", parse_mode=telegram.ParseMode.MARKDOWN, reply_markup=ReplyKeyboardMarkup(
+            [["Cancel"],["/restart"]]
+        ))
+        return SUBMIT_ADDRESS
+    USERINFO[user.id].update({"discord_username": update.message.text.strip()})
+    update.message.reply_text(text=SUBMIT_BEP20_TEXT, parse_mode=telegram.ParseMode.MARKDOWN, reply_markup=ReplyKeyboardMarkup(
         [["Cancel"],["/restart"]]
     ))
     return END_CONVERSATION
