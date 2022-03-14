@@ -84,6 +84,9 @@ if(WEBSITE_URL != ""):
 WELCOME_MESSAGE = f"""
 📖 Explore {COIN_NAME}, The most collaborative platform #Metaverse where you can socialize, build store, and many more, you monetize virtual experiences with Us.
 Hello, NAME! I am your friendly {COIN_NAME} Airdrop bot
+
+💸 {COIN_NAME} Airdrop 💸
+
 {SYMBOL}
 🔥 Reward: {AIRDROP_AMOUNT} {COIN_SYMBOL}
 👨‍👨‍👦 Referral: {"{:,.2f}".format(REFERRAL_REWARD)} {COIN_SYMBOL}
@@ -112,8 +115,10 @@ Airdrop Date: *{AIRDROP_DATE}*{EXPLORER_URL}
 """
 
 MAKE_SURE_TELEGRAM = f"""
-🔹 You must join our Telegram Channel & Telegram Group
+🔹 You must join our Telegram Group
 {TELEGRAM_LINKS}
+🔹 Telegram Channel
+https://t.me/onmetachannel
 """
 
 FOLLOW_TWITTER_TEXT = f"""
