@@ -117,6 +117,7 @@ Airdrop Date: *{AIRDROP_DATE}*{EXPLORER_URL}
 MAKE_SURE_TELEGRAM = f"""
 🔹 You must join our Telegram Group
 {TELEGRAM_LINKS}
+https://t.me/onmetaindonesia
 🔹 Telegram Channel
 https://t.me/onmetachannel
 """
